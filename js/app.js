@@ -19,19 +19,30 @@ document.addEventListener("DOMContentLoaded", async () => {
     const bcvElem = document.getElementById('bcv-value');
     if (bcvElem) bcvElem.innerText = bcvRate.toFixed(2);
 
-    // Ejecutamos ambas peticiones al mismo tiempo para ganar velocidad
-    await Promise.all([
-        fetchMenuData(),
-        fetchBCVRate()
-    ]);
-
-    renderFilters();
-    renderMenu();
-
-    // Esperamos medio segundo adicional para asegurar que las imágenes empiecen a pintar
-    setTimeout(() => {
+    // Mecanismo de Seguridad: Si el internet es muy lento o algo falla, 
+    // forzamos quitar el splash screen a los 8 segundos máximo.
+    const failsafe = setTimeout(() => {
         dismissSplash();
-    }, 500);
+    }, 8000);
+
+    try {
+        // Ejecutamos ambas peticiones al mismo tiempo para ganar velocidad
+        await Promise.all([
+            fetchMenuData(),
+            fetchBCVRate()
+        ]);
+    } catch (e) {
+        console.error("Error crítico en la carga inicial:", e);
+    } finally {
+        clearTimeout(failsafe);
+        renderFilters();
+        renderMenu();
+
+        // Esperamos medio segundo adicional para asegurar que las imágenes empiecen a pintar
+        setTimeout(() => {
+            dismissSplash();
+        }, 500);
+    }
 });
 
 function dismissSplash() {
