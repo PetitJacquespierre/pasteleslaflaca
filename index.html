@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pasteles y Tequeños La Flaca</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,600;0,800;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="img/isotipo.png">
+    
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ff5500">
+    <link rel="apple-touch-icon" href="img/isotipo.png">
+</head>
+<body>
+    
+    <!-- PANTALLA DE CARGA MEJORADA (Elegante y Premium) -->
+    <div id="splash-screen" onclick="dismissSplash()">
+        <div class="splash-content">
+            <div class="splash-ring"></div>
+            <div class="splash-ring-inner"></div>
+            <img src="img/isotipo.png" alt="La Flaca" class="splash-logo">
+            <div class="splash-loading-text">
+                CARGANDO EXPERIENCIA<span class="dots">...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <header>
+        <div class="logo-container">
+            <img src="img/logo_blanco.png" alt="Pasteles y Tequeños La Flaca" id="header-logo">
+        </div>
+        <div class="bcv-badge">
+            <i class="fa-solid fa-money-bill-trend-up text-yellow"></i> BCV: <span id="bcv-value">764.35</span> Bs
+        </div>
+    </header>
+
+    <!-- HERO IMPACTANTE -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-pill"><i class="fa-solid fa-star text-yellow"></i> CALIDAD Y SABOR GARANTIZADO</div>
+            <h1 class="hero-title">¡EL SABOR QUE TE <span class="text-gradient">ENCANTA!</span></h1>
+            <p class="hero-subtitle">Pasteles crujientes y tequeños full queso listos para freír o comer al instante.</p>
+            
+            <div class="hero-features">
+                <span class="feat-badge"><i class="fa-solid fa-bolt text-yellow"></i> Delivery Rápido</span>
+                <span class="feat-badge"><i class="fa-solid fa-cheese text-yellow"></i> 100% Queso</span>
+                <span class="feat-badge"><i class="fa-solid fa-pepper-hot text-yellow"></i> Salsa Gratis</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- MENÚ / CATÁLOGO -->
+    <main>
+        <div class="menu-header">
+            <h2 class="section-title">NUESTRO MENÚ</h2>
+        </div>
+        
+        <!-- BANNER DE CERRADO -->
+        <div id="store-closed-banner" class="store-closed-banner" style="display: none;">
+            <i class="fa-solid fa-store-slash"></i>
+            <span id="store-closed-text">Actualmente estamos CERRADOS.</span>
+        </div>
+
+        <!-- CARRUSEL DE PROMOS -->
+        <div id="promo-carousel" class="promo-carousel" style="display: none;">
+            <div class="carousel-track" id="carousel-track">
+                <!-- Las imágenes se inyectan aquí -->
+            </div>
+        </div>
+
+        <!-- CONTENEDOR DE FILTROS DINÁMICOS -->
+        <div id="menu-filters" class="filters-container">
+            <!-- Los botones se generarán desde app.js -->
+        </div>
+
+        <div class="menu-grid" id="menu-grid">
+            <!-- Carga dinámica desde app.js -->
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-content">
+            <a href="https://instagram.com/pasteleslaflaca.pf" target="_blank" rel="noopener" class="instagram-card">
+                <i class="fa-brands fa-instagram text-gradient" style="font-size: 2rem;"></i>
+                <span>Síguenos en Instagram<br><strong class="ig-handle">@pasteleslaflaca.pf</strong></span>
+            </a>
+            
+            <div class="agency-signature">
+                <p>DESARROLLADO CON PASIÓN POR</p>
+                <!-- ENLACE A GROW STUDIO -->
+                <a href="https://growstudioweb.vercel.app" target="_blank" rel="noopener" class="grow-brand" style="text-decoration: none;">
+                    <i class="fa-solid fa-code"></i> GROW STUDIO
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- BOTÓN FLOTANTE DEL CARRITO -->
+    <button class="cart-fab" id="cart-fab" onclick="toggleCart()">
+        <div class="fab-left">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span class="fab-label">MI PEDIDO</span>
+            <span class="cart-count" id="cart-count">0</span>
+        </div>
+        <div class="fab-right">
+            <div class="cart-total-usd" id="fab-total-usd">$0.00</div>
+            <div class="cart-total-bs" id="fab-total-bs">0.00 Bs</div>
+        </div>
+    </button>
+
+    <!-- MODAL DEL CARRITO -->
+    <div class="modal-overlay" id="cart-modal">
+        <div class="cart-container">
+            <!-- CABECERA FIJA -->
+            <div class="cart-header">
+                <h3><i class="fa-solid fa-bag-shopping text-yellow"></i> TU PEDIDO</h3>
+                <button class="close-btn" onclick="toggleCart()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <!-- CUERPO SCROLLEABLE -->
+            <div class="cart-body">
+                <!-- 1. FORMULARIO DE ENVÍO -->
+                <div class="cart-form-section">
+                    <h4 class="section-heading">Datos de Entrega</h4>
+                    
+                    <div class="form-group">
+                        <label class="form-label"><i class="fa-solid fa-truck-fast text-yellow"></i> Zona de Delivery:</label>
+                        <select id="delivery-zone" class="form-select" onchange="updateTotal()">
+                            <option value="0">Las Adjuntas (ENVÍO GRATIS)</option>
+                            <option value="1">Zonas Aledañas (+$1.00 USD)</option>
+                            <option value="2">Fuera de la zona (+$2.00 USD)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label"><i class="fa-solid fa-user text-yellow"></i> Tu Nombre Completo:</label>
+                        <input type="text" id="customer-name" class="form-input" placeholder="Ej. María Pérez">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label"><i class="fa-solid fa-location-dot text-yellow"></i> Tu Dirección Exacta:</label>
+                        <input type="text" id="customer-address" class="form-input" placeholder="Manzana, Casa, Punto de referencia">
+                    </div>
+                </div>
+
+                <!-- 2. FORMA DE PAGO -->
+                <div class="cart-form-section">
+                    <h4 class="section-heading">Forma de Pago</h4>
+                    <div class="form-group">
+                        <select id="payment-method" class="form-select" onchange="togglePaymentDetails()">
+                            <option value="Pago Móvil">Pago Móvil</option>
+                            <option value="Divisas (Efectivo)">Divisas (Efectivo)</option>
+                            <option value="USDT" disabled>USDT (Próximamente)</option>
+                        </select>
+                    </div>
+
+                    <!-- DATOS DE PAGO MÓVIL -->
+                    <div id="pago-movil-details" class="payment-details-box">
+                        <p class="payment-instruction">Copia los datos para realizar tu pago:</p>
+                        
+                        <div class="copy-row">
+                            <div class="copy-label">Teléfono:</div>
+                            <div class="copy-box">
+                                <span id="pm-phone">04127732710</span>
+                                <button type="button" class="copy-btn" onclick="copyToClipboard('pm-phone', this)"><i class="fa-regular fa-copy"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="copy-row">
+                            <div class="copy-label">Cédula:</div>
+                            <div class="copy-box">
+                                <span id="pm-id">15016800</span>
+                                <button type="button" class="copy-btn" onclick="copyToClipboard('pm-id', this)"><i class="fa-regular fa-copy"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="copy-row">
+                            <div class="copy-label">Banco:</div>
+                            <div class="copy-box">
+                                <span id="pm-bank">0102 - Venezuela</span>
+                                <button type="button" class="copy-btn" onclick="copyToClipboard('pm-bank', this)"><i class="fa-regular fa-copy"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="copy-row highlight-copy">
+                            <div class="copy-label">Monto Exacto:</div>
+                            <div class="copy-box">
+                                <span id="pm-amount">0.00 Bs</span>
+                                <button type="button" class="copy-btn" onclick="copyToClipboard('pm-amount', this)"><i class="fa-regular fa-copy"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. RESUMEN DE PRODUCTOS -->
+                <div class="cart-items-section">
+                    <h4 class="section-heading">Productos Seleccionados</h4>
+                    <div id="cart-items">
+                        <p class="empty-cart">Tu carrito está vacío.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FOOTER FIJO CON TOTALES -->
+            <div class="cart-footer">
+                <div class="totals">
+                    <div class="total-row">
+                        <span>Subtotal Productos:</span>
+                        <span id="summary-subtotal">$0.00</span>
+                    </div>
+                    <div class="total-row">
+                        <span>Envío / Delivery:</span>
+                        <span id="summary-delivery">$0.00</span>
+                    </div>
+                    <div class="total-row grand-total">
+                        <span>TOTAL A PAGAR:</span>
+                        <div class="total-box">
+                            <span id="summary-total-usd">$0.00</span>
+                            <span class="total-bs" id="summary-total-bs">0.00 Bs</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="whatsapp-btn" onclick="sendOrder()">
+                    <i class="fa-brands fa-whatsapp fa-xl"></i> ENVIAR PEDIDO POR WHATSAPP
+                </button>
+            </div>
+        </div>
+    <!-- SCRIPTS -->
+    <script src="js/app.js" charset="utf-8"></script>
+    <script>
+        // Registro de Service Worker para PWA (Instalación Offline)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('PWA ServiceWorker registrado'))
+                    .catch(err => console.error('PWA ServiceWorker falló:', err));
+            });
+        }
+    </script>
+</body>
+</html>

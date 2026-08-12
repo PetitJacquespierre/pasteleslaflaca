@@ -1,0 +1,487 @@
+// Estado de la App
+let products = [];
+let cart = [];
+let bcvRate = 764.35; 
+const WHATSAPP_NUMBER = "584120609841"; 
+const MENU_API_URL = "https://script.google.com/macros/s/AKfycbxaTgppYGOj3stpEzAtkPCZLIvfLSch62FV0fLbQNjMB2G7kfWOR_j6LHldbwyUytpw2g/exec";
+
+// Bloquea que el navegador recuerde la posición del scroll al recargar
+if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+}
+
+// Inicialización
+document.addEventListener("DOMContentLoaded", async () => {
+    // Forzamos ir al tope y ocultamos el scroll mientras carga
+    window.scrollTo(0, 0);
+    document.body.style.overflow = 'hidden';
+
+    const bcvElem = document.getElementById('bcv-value');
+    if (bcvElem) bcvElem.innerText = bcvRate.toFixed(2);
+
+    // Ejecutamos ambas peticiones al mismo tiempo para ganar velocidad
+    await Promise.all([
+        fetchMenuData(),
+        fetchBCVRate()
+    ]);
+
+    renderFilters();
+    renderMenu();
+
+    // Esperamos medio segundo adicional para asegurar que las imágenes empiecen a pintar
+    setTimeout(() => {
+        dismissSplash();
+    }, 500);
+});
+
+function dismissSplash() {
+    const splash = document.getElementById('splash-screen');
+    if (splash) {
+        splash.classList.add('hide-splash');
+        document.body.style.overflow = '';
+    }
+}
+
+// =========================================
+// FETCH: DATOS DEL MENÚ Y CONFIGURACIONES
+// =========================================
+let storeStatus = "AUTO";
+
+async function fetchMenuData() {
+    try {
+        const response = await fetch(MENU_API_URL);
+        const data = await response.json();
+        
+        // Compatibilidad con tu API anterior (array) o la nueva (objeto)
+        if (Array.isArray(data)) {
+            products = data;
+        } else if (data && !data.error) {
+            products = data.menu || [];
+            
+            // Compatibilidad con la variable vieja o la nueva
+            if (data.estadoTienda) {
+                storeStatus = data.estadoTienda;
+            } else if (data.tiendaAbierta === false) {
+                storeStatus = "CERRADO";
+            }
+            
+            if (data.promos && data.promos.length > 0) renderPromos(data.promos);
+        }
+        checkBusinessHours();
+    } catch (err) {
+        console.error("Fallo al cargar el menú desde Sheets:", err);
+    }
+}
+
+// =========================================
+// LÓGICA DE HORARIOS
+// =========================================
+function checkBusinessHours() {
+    // Si fuerzas el cierre desde el Excel
+    if (storeStatus === "CERRADO") {
+        closeStoreUI();
+        return;
+    }
+    
+    // Si fuerzas la apertura desde el Excel (sin importar la hora)
+    if (storeStatus === "ABIERTO") {
+        openStoreUI();
+        return;
+    }
+
+    // MODO AUTO: Según Hora de Venezuela
+    const now = new Date();
+    const vzlaTime = new Date(now.toLocaleString("en-US", {timeZone: "America/Caracas"}));
+    const hours = vzlaTime.getHours();
+
+    // Abierto de 6 AM a 10 PM
+    if (hours >= 6 && hours < 22) {
+        openStoreUI();
+    } else {
+        closeStoreUI();
+    }
+}
+
+function closeStoreUI() {
+    const banner = document.getElementById('store-closed-banner');
+    if (banner) banner.style.display = 'flex';
+    
+    // Deshabilitar botón de carrito
+    const fab = document.getElementById('cart-fab');
+    if (fab) {
+        fab.style.opacity = '0.5';
+        fab.style.pointerEvents = 'none';
+        fab.onclick = (e) => {
+            e.preventDefault();
+            alert("Actualmente estamos cerrados. Abrimos a las 6:00 AM.");
+        };
+    }
+}
+
+function openStoreUI() {
+    const banner = document.getElementById('store-closed-banner');
+    if (banner) banner.style.display = 'none';
+    
+    const fab = document.getElementById('cart-fab');
+    if (fab) {
+        fab.style.opacity = '1';
+        fab.style.pointerEvents = 'auto';
+        fab.onclick = toggleCart; // Restaura función original
+    }
+}
+
+// =========================================
+// CARRUSEL DE PROMOS
+// =========================================
+let currentPromoIndex = 0;
+function renderPromos(promos) {
+    const container = document.getElementById('promo-carousel');
+    const track = document.getElementById('carousel-track');
+    if (!container || !track) return;
+    
+    container.style.display = 'block';
+    track.innerHTML = '';
+    
+    promos.forEach(promo => {
+        const img = document.createElement('img');
+        img.src = `img/${promo.imagen}`;
+        img.onerror = () => { img.style.display = 'none'; };
+        track.appendChild(img);
+    });
+
+    if (promos.length > 1) {
+        setInterval(() => {
+            currentPromoIndex = (currentPromoIndex + 1) % promos.length;
+            track.style.transform = `translateX(-${currentPromoIndex * 100}%)`;
+        }, 4000);
+    }
+}
+
+// =========================================
+// FETCH: TASA BCV EN VIVO (Scraping API BCV)
+// =========================================
+const URL_API_DIVISAS_BCV = "https://script.google.com/macros/s/AKfycbwsoD8ahtAQUqfY0TQWf3-dDs29HL8kEJa2t-mjDR3PAo3exTTmtSwXqYuNB2ob5dFpgw/exec";
+
+async function fetchBCVRate() {
+    try {
+        const response = await fetch(URL_API_DIVISAS_BCV);
+        const data = await response.json();
+        
+        if (data && data.usd) {
+            bcvRate = parseFloat(data.usd);
+            console.log("¡Divisas BCV en vivo sincronizadas! $: " + bcvRate);
+        }
+    } catch (error) {
+        console.error("Error al conectar con la API central del BCV, usando tasa de respaldo (" + bcvRate + ").", error);
+    } finally {
+        const bcvElem = document.getElementById('bcv-value');
+        if (bcvElem) {
+            bcvElem.innerText = bcvRate.toFixed(2);
+        }
+    }
+}
+
+// =========================================
+// RENDERIZADO: FILTROS DINÁMICOS
+// =========================================
+let currentCategory = 'Todos';
+
+function renderFilters() {
+    const filtersContainer = document.getElementById('menu-filters');
+    if (!filtersContainer) return;
+
+    // Extraer categorías únicas usando un Set
+    const categorias = [...new Set(products.map(p => p.categoria))].filter(Boolean);
+    
+    // Si la base de datos está vacía o falló, no mostramos filtros
+    if (categorias.length === 0) return;
+
+    // Colocamos "Todos" como primera opción
+    categorias.unshift('Todos');
+
+    filtersContainer.innerHTML = '';
+    
+    categorias.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.className = `filter-btn ${cat === currentCategory ? 'active' : ''}`;
+        btn.innerText = cat;
+        btn.onclick = () => {
+            // Efecto visual: apagar todos y encender el presionado
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // Actualizar estado y re-dibujar el menú
+            currentCategory = cat;
+            renderMenu();
+        };
+        filtersContainer.appendChild(btn);
+    });
+}
+
+// =========================================
+// RENDERIZADO: PRODUCTOS
+// =========================================
+function renderMenu() {
+    const grid = document.getElementById('menu-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    // Filtrado lógico
+    const filteredProducts = currentCategory === 'Todos' 
+        ? products 
+        : products.filter(p => p.categoria === currentCategory);
+
+    if (filteredProducts.length === 0) {
+        grid.innerHTML = '<p style="text-align:center; color:#ccc; width:100%; grid-column: 1 / -1; padding: 40px 0;">No hay productos en esta categoría.</p>';
+        return;
+    }
+
+    // Dibujado de tarjetas
+    filteredProducts.forEach(p => {
+        const bsPrice = (p.precio * bcvRate).toFixed(2);
+        
+        // El src usa la carpeta img/ + el nombre que viene de la hoja de cálculo.
+        // El onerror previene imágenes rotas si el archivo no existe.
+        const imgHtml = p.imagen 
+            ? `<img src="img/${p.imagen}" alt="${p.nombre}" onerror="this.onerror=null; this.parentElement.innerHTML='<i class=\\'fa-solid fa-image\\'></i>';">` 
+            : `<i class="fa-solid fa-image"></i>`;
+
+        const html = `
+            <div class="product-card" onclick="addToCart(${p.id})">
+                <div class="product-image-box">
+                    ${imgHtml}
+                </div>
+                <div class="product-info">
+                    <h3>${p.nombre}</h3>
+                    <p class="product-desc">${p.descripcion}</p>
+                </div>
+                <div class="product-price">
+                    <div class="price-usd">$${p.precio.toFixed(2)}</div>
+                    <div class="price-bs">Aprox. ${bsPrice} Bs</div>
+                </div>
+                <button class="add-btn">
+                    <i class="fa-solid fa-plus"></i> AGREGAR
+                </button>
+            </div>
+        `;
+        grid.innerHTML += html;
+    });
+}
+
+// =========================================
+// LÓGICA DEL CARRITO
+// =========================================
+function addToCart(id) {
+    const product = products.find(p => p.id === id);
+    const existing = cart.find(item => item.id === id);
+
+    if (existing) {
+        existing.qty++;
+    } else {
+        cart.push({ ...product, qty: 1 });
+    }
+    
+    updateCartUI();
+    
+    // Efecto de palpitación en el botón flotante al agregar
+    const fab = document.getElementById('cart-fab');
+    if (fab) {
+        fab.style.transform = 'scale(1.08)';
+        setTimeout(() => fab.style.transform = 'scale(1)', 200);
+    }
+}
+
+function updateQty(id, delta) {
+    const item = cart.find(i => i.id === id);
+    if (item) {
+        item.qty += delta;
+        if (item.qty <= 0) {
+            cart = cart.filter(i => i.id !== id);
+        }
+    }
+    updateCartUI();
+}
+
+function updateCartUI() {
+    const cartItems = document.getElementById('cart-items');
+    const fabCount = document.getElementById('cart-count');
+    const fabTotalUsd = document.getElementById('fab-total-usd');
+    const fabTotalBs = document.getElementById('fab-total-bs');
+    
+    let subtotal = 0;
+    let totalItems = 0;
+    
+    if (cartItems) cartItems.innerHTML = '';
+
+    if (cart.length === 0) {
+        if (cartItems) cartItems.innerHTML = '<p class="empty-cart"><i class="fa-solid fa-basket-shopping fa-2x"></i><br><br>Tu carrito está vacío.</p>';
+        if (fabCount) fabCount.innerText = "0";
+        if (fabTotalUsd) fabTotalUsd.innerText = "$0.00";
+        if (fabTotalBs) fabTotalBs.innerText = "0.00 Bs";
+        updateTotal(0);
+        return;
+    }
+
+    cart.forEach(item => {
+        const itemTotal = item.precio * item.qty;
+        subtotal += itemTotal;
+        totalItems += item.qty;
+
+        if (cartItems) {
+            cartItems.innerHTML += `
+                <div class="cart-item">
+                    <div class="item-info">
+                        <h4>${item.nombre}</h4>
+                        <p>$${itemTotal.toFixed(2)} USD</p>
+                    </div>
+                    <div class="qty-controls">
+                        <button class="qty-btn" onclick="updateQty(${item.id}, -1)">-</button>
+                        <span>${item.qty}</span>
+                        <button class="qty-btn" onclick="updateQty(${item.id}, 1)">+</button>
+                    </div>
+                </div>
+            `;
+        }
+    });
+
+    const bsSubtotal = (subtotal * bcvRate).toFixed(2);
+    if (fabCount) fabCount.innerText = totalItems;
+    if (fabTotalUsd) fabTotalUsd.innerText = `$${subtotal.toFixed(2)}`;
+    if (fabTotalBs) fabTotalBs.innerText = `${bsSubtotal} Bs`;
+    
+    updateTotal(subtotal);
+}
+
+function updateTotal(subtotalCalc = null) {
+    let subtotal = subtotalCalc;
+    if (subtotal === null) {
+        subtotal = cart.reduce((sum, item) => sum + (item.precio * item.qty), 0);
+    }
+    
+    const deliverySelect = document.getElementById('delivery-zone');
+    const deliveryCost = deliverySelect ? parseFloat(deliverySelect.value) : 0;
+    
+    const totalUsd = subtotal + deliveryCost;
+    const totalBs = (totalUsd * bcvRate).toFixed(2);
+
+    const elemSubtotal = document.getElementById('summary-subtotal');
+    const elemDelivery = document.getElementById('summary-delivery');
+    const elemTotalUsd = document.getElementById('summary-total-usd');
+    const elemTotalBs = document.getElementById('summary-total-bs');
+
+    if (elemSubtotal) elemSubtotal.innerText = `$${subtotal.toFixed(2)}`;
+    if (elemDelivery) elemDelivery.innerText = deliveryCost === 0 ? "GRATIS" : `$${deliveryCost.toFixed(2)} USD`;
+    if (elemTotalUsd) elemTotalUsd.innerText = `$${totalUsd.toFixed(2)} USD`;
+    if (elemTotalBs) elemTotalBs.innerText = `${totalBs} Bs`;
+    
+    // Actualizar también el monto exacto de Pago Móvil si existe en el DOM
+    const elemPmAmount = document.getElementById('pm-amount');
+    if (elemPmAmount) elemPmAmount.innerText = `${totalBs} Bs`;
+}
+
+function toggleCart() {
+    const modal = document.getElementById('cart-modal');
+    if (modal) {
+        if (modal.classList.contains('active')) {
+            modal.classList.remove('active');
+        } else {
+            modal.classList.add('active');
+        }
+    }
+}
+
+// =========================================
+// MÉTODOS DE PAGO Y PORTAPAPELES
+// =========================================
+function togglePaymentDetails() {
+    const method = document.getElementById('payment-method').value;
+    const pmDetails = document.getElementById('pago-movil-details');
+    if (pmDetails) {
+        if (method === "Pago Móvil") {
+            pmDetails.style.display = "block";
+        } else {
+            pmDetails.style.display = "none";
+        }
+    }
+}
+
+function copyToClipboard(elementId, btn) {
+    const textToCopy = document.getElementById(elementId).innerText;
+    navigator.clipboard.writeText(textToCopy).then(() => {
+        const originalIcon = btn.innerHTML;
+        btn.innerHTML = '<i class="fa-solid fa-check text-yellow"></i> Copiado';
+        btn.classList.add('copied');
+        btn.style.color = "#4ade80"; // Color verde éxito
+        
+        setTimeout(() => {
+            btn.innerHTML = originalIcon;
+            btn.classList.remove('copied');
+            btn.style.color = "";
+        }, 2000);
+    }).catch(err => {
+        console.error('Error al copiar: ', err);
+    });
+}
+
+// =========================================
+// WHATSAPP CHECKOUT
+// =========================================
+function sendOrder() {
+    if (cart.length === 0) {
+        alert("¡Tu carrito está vacío! Agrega algunos pasteles o tequeños primero.");
+        return;
+    }
+
+    const nameInput = document.getElementById('customer-name');
+    const addressInput = document.getElementById('customer-address');
+    const name = nameInput ? nameInput.value.trim() : '';
+    const address = addressInput ? addressInput.value.trim() : '';
+    
+    const deliverySelect = document.getElementById('delivery-zone');
+    const deliveryName = deliverySelect ? deliverySelect.options[deliverySelect.selectedIndex].text : 'Delivery';
+    const deliveryCost = deliverySelect ? parseFloat(deliverySelect.value) : 0;
+
+    const paymentSelect = document.getElementById('payment-method');
+    const paymentMethod = paymentSelect ? paymentSelect.value : 'Pago Móvil';
+
+    if (!name || !address) {
+        alert("Por favor, ingresa tu nombre y tu dirección de entrega para procesar el pedido.");
+        return;
+    }
+
+    let subtotal = 0;
+    
+    // Usamos \r\n (Carriage Return + Line Feed) para que WhatsApp móvil respete estrictamente el salto de línea
+    let text = `==========================\r\n`;
+    text += `*NUEVO PEDIDO - LA FLACA*\r\n`;
+    text += `==========================\r\n\r\n`;
+    
+    text += `*DATOS DEL CLIENTE*\r\n`;
+    text += `- Cliente: ${name}\r\n`;
+    text += `- Dirección: ${address}\r\n`;
+    text += `- Zona: ${deliveryName}\r\n`;
+    text += `- Pago: ${paymentMethod}\r\n\r\n`;
+    
+    text += `*PRODUCTOS*\r\n`;
+
+    cart.forEach(item => {
+        const itemTotal = item.precio * item.qty;
+        subtotal += itemTotal;
+        text += `• ${item.qty}x ${item.nombre} ($${itemTotal.toFixed(2)})\r\n`;
+    });
+
+    const totalUsd = subtotal + deliveryCost;
+    const totalBs = (totalUsd * bcvRate).toFixed(2);
+
+    text += `\r\n*RESUMEN DE PAGO*\r\n`;
+    text += `- Subtotal: $${subtotal.toFixed(2)}\r\n`;
+    text += `- Delivery: $${deliveryCost.toFixed(2)}\r\n`;
+    text += `*TOTAL A PAGAR: $${totalUsd.toFixed(2)} (${totalBs} Bs)*\r\n\r\n`;
+    text += `_Pedido realizado desde la web La Flaca_`;
+
+    // Codificamos la URL. encodeURIComponent convierte \r\n en %0D%0A (El salto de línea oficial para WhatsApp Mobile)
+    const encodedText = encodeURIComponent(text);
+    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedText}`;
+    
+    window.open(whatsappUrl, '_blank');
+}

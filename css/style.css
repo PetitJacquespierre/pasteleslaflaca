@@ -1,0 +1,1002 @@
+:root {
+    --primary: #FFC107; /* Amarillo Neón */
+    --primary-glow: rgba(255, 193, 7, 0.4);
+    --bg-dark: #1a1a1a;
+    --bg-card: rgba(255, 255, 255, 0.05);
+    --bg-card-hover: rgba(255, 255, 255, 0.1);
+    --text-main: #FFFFFF;
+    --text-muted: #A0A0A0;
+    --radius: 15px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* ========================================= */
+/* FONDO GENERAL ANIMADO                     */
+/* ========================================= */
+body {
+    background: linear-gradient(-45deg, #1a1a1a, #2a1600, #331100, #1a1a1a);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    color: var(--text-main);
+    min-height: 100vh;
+    padding-bottom: 90px;
+    position: relative;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-image: url('../img/bg-pasteles.jpg');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.12; /* Muy oscuro para que resalte la comida pero se lea el texto */
+    z-index: -1;
+    pointer-events: none;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.text-yellow { color: var(--primary); }
+
+/* ========================================= */
+/* SPLASH SCREEN PREMIUM                     */
+/* ========================================= */
+#splash-screen {
+    position: fixed;
+    inset: 0;
+    background-color: #0d0d0d;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;
+}
+
+#splash-screen.hide-splash {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+.splash-content {
+    position: relative;
+    width: 170px;
+    height: 170px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transform: translateY(-30px); /* Sube visualmente el centro */
+}
+
+/* Anillo de neón giratorio (Exterior) */
+.splash-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    border-top-color: var(--primary);
+    animation: spinRing 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+    box-shadow: 0 0 15px rgba(255, 193, 7, 0.3);
+}
+
+/* Anillo de neón giratorio (Interior) */
+.splash-ring-inner {
+    position: absolute;
+    width: 82%;
+    height: 82%;
+    border-radius: 50%;
+    border: 1px dashed transparent;
+    border-bottom-color: var(--primary);
+    border-left-color: var(--primary);
+    animation: spinRingReverse 2.5s linear infinite;
+    opacity: 0.6;
+}
+
+@keyframes spinRing {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes spinRingReverse {
+    0% { transform: rotate(360deg); }
+    100% { transform: rotate(0deg); }
+}
+
+/* Logo con pulso suave */
+.splash-logo {
+    width: 95px;
+    height: auto;
+    z-index: 2;
+    animation: pulseLogo 2s infinite ease-in-out;
+}
+
+@keyframes pulseLogo {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(255, 193, 7, 0.3)); }
+    50% { transform: scale(1.08); filter: drop-shadow(0 0 20px rgba(255, 193, 7, 0.7)); }
+}
+
+.splash-loading-text {
+    position: absolute;
+    bottom: -60px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: var(--primary);
+    width: max-content;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+}
+
+.dots {
+    animation: blinkDots 1.5s infinite steps(4, end);
+}
+
+@keyframes blinkDots {
+    0%, 20% { opacity: 0; }
+    40% { opacity: 0.3; }
+    60% { opacity: 0.6; }
+    80%, 100% { opacity: 1; }
+}
+
+
+/* ========================================= */
+/* HEADER                                    */
+/* ========================================= */
+header {
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid rgba(255, 193, 7, 0.15);
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+#header-logo {
+    width: auto;
+    height: 70px;
+    max-width: 250px;
+    object-fit: contain;
+    display: block;
+    filter: drop-shadow(0 0 12px rgba(255, 193, 7, 0.3));
+    transition: transform 0.3s ease;
+}
+
+#header-logo:hover {
+    transform: scale(1.03);
+    filter: drop-shadow(0 0 18px rgba(255, 193, 7, 0.6));
+}
+
+.bcv-badge {
+    font-size: 0.85rem;
+    color: #FFFFFF;
+    font-weight: 800;
+    background: rgba(0,0,0,0.6);
+    padding: 6px 15px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 193, 7, 0.4);
+    white-space: nowrap;
+}
+
+/* ========================================= */
+/* HERO                                      */
+/* ========================================= */
+.hero {
+    text-align: center;
+    padding: 40px 20px;
+    margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    color: #FFFFFF;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 5px 15px;
+    border-radius: 20px;
+    margin-bottom: 15px;
+    letter-spacing: 1px;
+}
+
+.hero-title {
+    font-size: clamp(2rem, 6vw, 3rem);
+    font-weight: 900;
+    line-height: 1.15;
+    margin: 0 0 15px 0;
+    color: #FFFFFF;
+}
+
+.text-gradient {
+    background: linear-gradient(90deg, #ffaa00, #ff5500);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 20px rgba(255, 193, 7, 0.3);
+}
+
+.hero-subtitle {
+    font-size: 1rem;
+    color: #dddddd;
+    max-width: 500px;
+    margin: 0 auto 25px;
+    line-height: 1.5;
+}
+
+.hero-features {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.feat-badge {
+    background: #2a1600;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-main);
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 8px 15px;
+    border-radius: 8px;
+}
+
+/* ========================================= */
+/* MENÚ Y TARJETAS                           */
+/* ========================================= */
+main {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.menu-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.section-title {
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: #FFFFFF;
+    letter-spacing: 2px;
+    margin: 0;
+}
+
+/* ========================================= */
+/* BANNER DE CERRADO Y CARRUSEL PROMOS       */
+/* ========================================= */
+.store-closed-banner {
+    background: rgba(220, 53, 69, 0.9);
+    color: #fff;
+    padding: 15px;
+    border-radius: 12px;
+    margin: 0 auto 20px auto;
+    text-align: center;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+    max-width: 500px;
+}
+
+.promo-carousel {
+    width: 100%;
+    margin-bottom: 25px;
+    overflow: hidden;
+    border-radius: 15px;
+    position: relative;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+    background: #000;
+}
+
+.carousel-track {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    width: 100%;
+}
+
+.carousel-track img {
+    width: 100%;
+    flex-shrink: 0;
+    object-fit: cover;
+    max-height: 250px;
+    border-radius: 15px;
+}
+
+/* ========================================= */
+/* FILTROS DINÁMICOS                         */
+/* ========================================= */
+.filters-container {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ccc;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.filter-btn:hover {
+    background: rgba(255, 193, 7, 0.1);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.filter-btn.active {
+    background: var(--primary);
+    color: #000;
+    border-color: var(--primary);
+    box-shadow: 0 0 15px rgba(255, 193, 7, 0.4);
+    font-weight: 800;
+}
+
+.menu-grid {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.product-card {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 20px;
+    border: 1px solid rgba(255, 165, 0, 0.2);
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+    overflow: hidden;
+    text-align: center;
+}
+
+.product-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 30px rgba(255, 165, 0, 0.3);
+    border-color: rgba(255, 165, 0, 0.8);
+    background: var(--bg-card-hover);
+}
+
+.product-image-box {
+    width: 100%;
+    height: 180px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 10px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed rgba(255,255,255,0.1);
+    overflow: hidden;
+    position: relative;
+}
+
+.product-image-box i {
+    font-size: 3rem;
+    color: rgba(255, 255, 255, 0.1);
+}
+
+.product-image-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.product-info h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #FFFFFF;
+}
+
+.product-desc {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 18px;
+    flex-grow: 1;
+    line-height: 1.5;
+}
+
+.product-price {
+    margin-bottom: 15px;
+}
+
+.price-usd {
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: var(--primary);
+}
+
+.price-bs {
+    font-size: 0.9rem;
+    color: #aaaaaa;
+    font-weight: 600;
+}
+
+.add-btn {
+    background: rgba(255, 170, 0, 0.1);
+    color: var(--primary);
+    border: 1px solid var(--primary);
+    padding: 14px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    width: 100%;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.add-btn:hover {
+    background: var(--primary);
+    color: #000000;
+    box-shadow: 0 0 20px rgba(255, 170, 0, 0.5);
+}
+
+/* ========================================= */
+/* FOOTER Y FIRMA GROW STUDIO                */
+/* ========================================= */
+footer {
+    text-align: center;
+    padding: 30px 20px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    background: rgba(0,0,0,0.6);
+}
+
+.footer-content {
+    max-width: 500px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+}
+
+.instagram-card {
+    display: inline-flex;
+    align-items: center;
+    gap: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 193, 7, 0.2);
+    padding: 12px 25px;
+    border-radius: 30px;
+    color: #FFFFFF;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: all 0.3s;
+    text-align: left;
+    line-height: 1.3;
+}
+
+.instagram-card:hover {
+    background: rgba(255, 193, 7, 0.15);
+    border-color: var(--primary);
+    transform: translateY(-3px);
+}
+
+.ig-handle {
+    font-weight: 700;
+}
+
+.agency-signature {
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.agency-signature p {
+    margin-bottom: 5px;
+    font-size: 0.75rem;
+    color: #aaa;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.grow-brand {
+    display: inline-block;
+    font-weight: 900;
+    font-size: 1.3rem;
+    letter-spacing: 2px;
+    background: linear-gradient(90deg, #fff, #ffaa00, #ff5500, #fff);
+    background-size: 300% auto;
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: shineText 3s linear infinite;
+    text-shadow: 0px 0px 15px rgba(255, 170, 0, 0.4);
+    cursor: pointer;
+}
+
+@keyframes shineText {
+    to { background-position: 300% center; }
+}
+
+/* ========================================= */
+/* FAB (BOTÓN FLOTANTE DEL CARRITO)          */
+/* ========================================= */
+.cart-fab {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    background: #ff5500;
+    color: #fff;
+    border: none;
+    padding: 18px 25px;
+    border-radius: 40px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 8px 25px rgba(255, 85, 0, 0.5);
+    z-index: 1000;
+    transition: transform 0.25s;
+}
+
+.cart-fab:hover {
+    transform: scale(1.05);
+}
+
+.fab-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.1rem;
+}
+
+.cart-count {
+    background: #fff;
+    color: #ff5500;
+    border-radius: 50%;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+}
+
+.fab-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.cart-total-usd {
+    font-size: 1.15rem;
+    font-weight: 900;
+    line-height: 1.1;
+}
+
+.cart-total-bs {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #ffcccc; /* Un tono claro para diferenciarlo del blanco de los dólares */
+}
+
+/* ========================================= */
+/* MODAL Y FORMULARIO (CARRITO REORGANIZADO) */
+/* ========================================= */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(8px);
+    z-index: 2000;
+    display: none; 
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.cart-container {
+    background: #1a1a1a;
+    width: 100%;
+    max-width: 500px;
+    border-radius: 15px;
+    border: 1px solid #333;
+    overflow: hidden;
+    max-height: 95vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 1. HEADER FIJO */
+.cart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background: #222;
+    border-bottom: 1px solid #333;
+}
+
+.cart-header h3 {
+    margin: 0;
+    color: #FFFFFF;
+    font-size: 1.3rem;
+}
+
+.close-btn {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 1.8rem;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.close-btn:hover { color: var(--primary); }
+
+/* 2. CUERPO SCROLLEABLE */
+.cart-body {
+    overflow-y: auto;
+    flex-grow: 1;
+    padding: 20px;
+    /* Custom scrollbar para la elegancia */
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary) #111;
+}
+.cart-body::-webkit-scrollbar { width: 6px; }
+.cart-body::-webkit-scrollbar-track { background: #111; }
+.cart-body::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+
+
+.section-heading {
+    color: #ccc;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 8px;
+}
+
+.cart-form-section {
+    margin-bottom: 25px;
+}
+
+.form-group { margin-bottom: 15px; }
+
+.form-label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.95rem;
+    color: #FFFFFF;
+}
+
+.form-input, .form-select {
+    width: 100%;
+    padding: 12px;
+    background: #FFFFFF;
+    color: #000000;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.form-input::placeholder { color: #666; }
+.form-select option { background-color: #FFFFFF; color: #000000; }
+
+.form-input:focus, .form-select:focus {
+    outline: none;
+    border-color: #ff5500;
+    box-shadow: 0 0 10px rgba(255, 170, 0, 0.5);
+}
+
+/* SECCIÓN DE PRODUCTOS EN EL CARRITO */
+.cart-items-section {
+    margin-bottom: 10px;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+}
+
+.item-info h4 { 
+    font-size: 1.05rem; 
+    color: #FFFFFF; 
+    font-weight: 700; 
+    margin-bottom: 5px;
+}
+.item-info p { 
+    font-size: 0.95rem; 
+    color: var(--primary); 
+    font-weight: 800; 
+}
+
+.qty-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.qty-btn {
+    background: rgba(255, 170, 0, 0.2);
+    color: var(--primary);
+    border: 1px solid var(--primary);
+    width: 35px;
+    height: 35px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 900;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.empty-cart {
+    text-align: center;
+    color: #aaa;
+    font-size: 1.1rem;
+    padding: 20px 0;
+}
+
+/* ========================================= */
+/* MÉTODOS DE PAGO Y PORTAPAPELES            */
+/* ========================================= */
+.payment-details-box {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 170, 0, 0.2);
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
+}
+
+.payment-instruction {
+    font-size: 0.85rem;
+    color: #ccc;
+    margin-bottom: 12px;
+    margin-top: 0;
+}
+
+.copy-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.4);
+    padding: 10px 12px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.copy-label {
+    font-weight: 600;
+    color: #aaa;
+    font-size: 0.85rem;
+    width: 35%;
+}
+
+.copy-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 65%;
+    color: #fff;
+    font-size: 0.95rem;
+}
+
+.copy-btn {
+    background: transparent;
+    border: none;
+    color: var(--primary);
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    padding: 5px;
+}
+
+.copy-btn:hover {
+    color: #fff;
+    transform: scale(1.1);
+}
+
+.highlight-copy {
+    border: 1px solid var(--primary);
+    background-color: rgba(255, 85, 0, 0.1);
+}
+.highlight-copy .copy-label {
+    color: var(--primary);
+}
+
+/* 3. FOOTER FIJO (TOTALES Y BOTÓN) */
+.cart-footer {
+    padding: 20px;
+    background: #222;
+    border-top: 1px solid #444;
+}
+
+.totals { margin-bottom: 20px; }
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    color: #ccc;
+    font-size: 1rem;
+}
+
+.grand-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.3rem;
+    font-weight: bold;
+    border-top: 1px dashed #555;
+    padding-top: 12px;
+    color: #FFFFFF;
+}
+
+.total-box { text-align: right; }
+
+#summary-total-usd {
+    color: var(--primary);
+    font-size: 1.6rem;
+}
+
+.total-bs {
+    display: block;
+    font-size: 0.95rem;
+    color: #aaa;
+    font-weight: normal;
+}
+
+.whatsapp-btn {
+    width: 100%;
+    padding: 16px;
+    background: #25D366;
+    color: #000000;
+    border: none;
+    border-radius: 10px;
+    font-weight: 900;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.whatsapp-btn:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 20px rgba(37, 211, 102, 0.4);
+}
+
+/* ========================================= */
+/* RESPONSIVE MÓVIL (OPTIMIZACIÓN)           */
+/* ========================================= */
+@media (max-width: 600px) {
+    body {
+        padding-bottom: 250px; /* Espacio gigante abajo para scrollear tranquilamente */
+    }
+    header {
+        padding: 10px 15px;
+    }
+    #header-logo {
+        height: 50px;
+    }
+    .bcv-badge {
+        font-size: 0.75rem;
+        padding: 5px 10px;
+    }
+
+    /* Scroll horizontal de filtros en móvil */
+    .filters-container {
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 10px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none; /* Firefox */
+    }
+    .filters-container::-webkit-scrollbar {
+        display: none; /* Chrome/Safari */
+    }
+    .filter-btn {
+        flex-shrink: 0; /* Evita que los botones se encojan */
+    }
+    
+    /* MODAL A PRUEBA DE FALLOS: Centrado clásico con margen de seguridad */
+    .modal-overlay {
+        padding: 15px;
+        align-items: center; /* Centrado para que nunca choque con el piso del celular */
+    }
+    .cart-container {
+        border-radius: 15px;
+        max-height: 80vh; /* Máximo 80% de altura para asegurar que quepa el footer del carrito */
+        border: 1px solid #444;
+    }
+    
+    /* Barra flotante super agresiva para que ningún navegador la ignore */
+    .cart-fab {
+        position: fixed !important;
+        bottom: 20px !important;
+        right: 15px !important;
+        left: 15px !important;
+        width: auto !important; /* width auto + right/left logra estirarlo perfecto */
+        border-radius: 20px !important;
+        padding: 15px 20px !important;
+        justify-content: space-between !important;
+        box-sizing: border-box !important;
+        z-index: 8000 !important; /* Lo pone por encima de todo */
+        display: flex !important;
+    }
+    .fab-label {
+        display: inline-block !important; /* Fuerza a que se muestre el texto MI PEDIDO */
+    }
+    .cart-total-usd {
+        font-size: 1.15rem;
+    }
+    .cart-total-bs {
+        font-size: 0.8rem;
+    }
+    
+    .hero-title {
+        font-size: 2.2rem;
+    }
+}
