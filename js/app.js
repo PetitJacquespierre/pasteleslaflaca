@@ -462,11 +462,14 @@ function updateTotal(subtotalCalc = null) {
 
 function toggleCart() {
     const modal = document.getElementById('cart-modal');
+    const fab = document.getElementById('cart-fab');
     if (modal) {
         if (modal.classList.contains('active')) {
             modal.classList.remove('active');
+            if (fab) fab.style.setProperty('display', 'flex', 'important');
         } else {
             modal.classList.add('active');
+            if (fab) fab.style.setProperty('display', 'none', 'important');
         }
     }
 }
