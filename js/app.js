@@ -5,6 +5,10 @@ let bcvRate = 764.35;
 const WHATSAPP_NUMBER = "584120609841"; 
 const MENU_API_URL = "https://script.google.com/macros/s/AKfycbxaTgppYGOj3stpEzAtkPCZLIvfLSch62FV0fLbQNjMB2G7kfWOR_j6LHldbwyUytpw2g/exec";
 
+// === NUEVO: PANEL CENTRAL GROW STUDIO ===
+const GROW_STUDIO_API_URL = "https://script.google.com/macros/s/AKfycbxQyj-9VTVcBoK_vDRZi1jwzXi-WABzZ1hVuxp0WAE_Gj7TVknm6NOwiEQOHQ2XS-qA/exec";
+const CLIENT_ID = "la_flaca"; // El identificador único de este cliente en Grow Studio
+
 // Bloquea que el navegador recuerde la posición del scroll al recargar
 if ('scrollRestoration' in history) {
     history.scrollRestoration = 'manual';
@@ -19,31 +23,66 @@ document.addEventListener("DOMContentLoaded", async () => {
     const bcvElem = document.getElementById('bcv-value');
     if (bcvElem) bcvElem.innerText = bcvRate.toFixed(2);
 
-    // Mecanismo de Seguridad: Si el internet es muy lento o algo falla, 
-    // forzamos quitar el splash screen a los 8 segundos máximo.
+    // Mecanismo de Seguridad
     const failsafe = setTimeout(() => {
         dismissSplash();
     }, 8000);
 
     try {
-        // Ejecutamos ambas peticiones al mismo tiempo para ganar velocidad
+        // === PASO 1: VERIFICAR ESTADO EN EL CEREBRO CENTRAL ===
+        const isSuspended = await checkSaaSStatus();
+        
+        if (isSuspended) {
+            // Si está suspendido por Grow Studio, activamos el Kill Switch y NO cargamos el menú
+            clearTimeout(failsafe);
+            suspendStoreUI();
+            dismissSplash();
+            return; 
+        }
+
+        // === PASO 2: CARGA NORMAL (Si está activo) ===
         await Promise.all([
             fetchMenuData(),
             fetchBCVRate()
         ]);
+        
+        renderFilters();
+        renderMenu();
+        
     } catch (e) {
         console.error("Error crítico en la carga inicial:", e);
     } finally {
         clearTimeout(failsafe);
-        renderFilters();
-        renderMenu();
-
         // Esperamos medio segundo adicional para asegurar que las imágenes empiecen a pintar
         setTimeout(() => {
             dismissSplash();
         }, 500);
     }
 });
+
+async function checkSaaSStatus() {
+    // Si aún no has puesto tu URL maestra, salta este paso para evitar errores
+    if (!GROW_STUDIO_API_URL || GROW_STUDIO_API_URL.includes("URL_DE_")) {
+        return false; 
+    }
+    
+    try {
+        const response = await fetch(GROW_STUDIO_API_URL);
+        const data = await response.json();
+        
+        if (data && data.clientes) {
+            const miCliente = data.clientes.find(c => c.id === CLIENT_ID);
+            // Verifica si en el master el estado dice SUSPENDIDO
+            if (miCliente && miCliente.estado.toUpperCase() === "SUSPENDIDO") {
+                return true;
+            }
+        }
+        return false;
+    } catch (e) {
+        console.error("No se pudo conectar con el Panel Central de Grow Studio:", e);
+        return false; // Por seguridad, si falla tu Excel maestro, no le apaga la web al cliente
+    }
+}
 
 function dismissSplash() {
     const splash = document.getElementById('splash-screen');
@@ -88,6 +127,16 @@ async function fetchMenuData() {
 // LÓGICA DE HORARIOS
 // =========================================
 function checkBusinessHours() {
+    // Si fuerzas la suspensión por falta de pago (SaaS Kill Switch)
+    if (storeStatus === "SUSPENDIDO") {
+        suspendStoreUI();
+        return;
+    }
+
+    // Asegurarse de que si NO está suspendido, se oculte la pantalla por si acaso
+    const suspendedScreen = document.getElementById('system-suspended-screen');
+    if (suspendedScreen) suspendedScreen.style.display = 'none';
+
     // Si fuerzas el cierre desde el Excel
     if (storeStatus === "CERRADO") {
         closeStoreUI();
@@ -139,6 +188,19 @@ function openStoreUI() {
         fab.style.pointerEvents = 'auto';
         fab.onclick = toggleCart; // Restaura función original
     }
+}
+
+function suspendStoreUI() {
+    // Muestra la pantalla negra de mantenimiento
+    const suspendedScreen = document.getElementById('system-suspended-screen');
+    if (suspendedScreen) suspendedScreen.style.display = 'flex';
+    
+    // Oculta el carrito
+    const fab = document.getElementById('cart-fab');
+    if (fab) fab.style.display = 'none';
+
+    // Deshabilita scroll
+    document.body.style.overflow = 'hidden';
 }
 
 // =========================================
