@@ -251,10 +251,18 @@ function renderMenu() {
     filteredProducts.forEach(p => {
         const bsPrice = (p.precio * bcvRate).toFixed(2);
         
-        // El src usa la carpeta img/ + el nombre que viene de la hoja de cálculo.
-        // El onerror previene imágenes rotas si el archivo no existe.
-        const imgHtml = p.imagen 
-            ? `<img src="img/${p.imagen}" alt="${p.nombre}" onerror="this.onerror=null; this.parentElement.innerHTML='<i class=\\'fa-solid fa-image\\'></i>';">` 
+        // Lógica Inteligente para Imágenes: Soporta tanto links de internet como archivos locales
+        let imgSrc = '';
+        if (p.imagen) {
+            if (p.imagen.startsWith('http://') || p.imagen.startsWith('https://')) {
+                imgSrc = p.imagen; // Link web directo
+            } else {
+                imgSrc = `img/${p.imagen}`; // Archivo local en tu carpeta img/
+            }
+        }
+
+        const imgHtml = imgSrc 
+            ? `<img src="${imgSrc}" alt="${p.nombre}" onerror="this.onerror=null; this.parentElement.innerHTML='<i class=\\'fa-solid fa-image\\'></i>';">` 
             : `<i class="fa-solid fa-image"></i>`;
 
         const html = `
