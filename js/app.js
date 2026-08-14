@@ -346,7 +346,7 @@ function updateCartUI() {
                         <p>$${itemTotal.toFixed(2)} USD</p>
                     </div>
                     <div class="qty-controls">
-                        <button class="qty-btn" onclick="updateQty(${item.id}, -1)">-</button>
+                        <button class="qty-btn" onclick="updateQty(${item.id}, -1)">${item.qty === 1 ? '<i class="fa-solid fa-trash-can" style="font-size: 0.9rem;"></i>' : '-'}</button>
                         <span>${item.qty}</span>
                         <button class="qty-btn" onclick="updateQty(${item.id}, 1)">+</button>
                     </div>
@@ -445,8 +445,11 @@ function sendOrder() {
 
     const nameInput = document.getElementById('customer-name');
     const addressInput = document.getElementById('customer-address');
+    const notesInput = document.getElementById('customer-notes');
+    
     const name = nameInput ? nameInput.value.trim() : '';
     const address = addressInput ? addressInput.value.trim() : '';
+    const notes = notesInput ? notesInput.value.trim() : '';
     
     const deliverySelect = document.getElementById('delivery-zone');
     const deliveryName = deliverySelect ? deliverySelect.options[deliverySelect.selectedIndex].text : 'Delivery';
@@ -455,8 +458,41 @@ function sendOrder() {
     const paymentSelect = document.getElementById('payment-method');
     const paymentMethod = paymentSelect ? paymentSelect.value : 'Pago Móvil';
 
-    if (!name || !address) {
-        alert("Por favor, ingresa tu nombre y tu dirección de entrega para procesar el pedido.");
+    // Validación Visual Premium (Sin Alerts feos)
+    let isValid = true;
+    
+    if (!name) {
+        if(nameInput) nameInput.classList.add('input-error');
+        isValid = false;
+    } else {
+        if(nameInput) nameInput.classList.remove('input-error');
+    }
+    
+    if (!address) {
+        if(addressInput) addressInput.classList.add('input-error');
+        isValid = false;
+    } else {
+        if(addressInput) addressInput.classList.remove('input-error');
+    }
+
+    if (!isValid) {
+        // Removemos las clases después de que termine la animación (0.4s) para que pueda volver a vibrar si se equivoca de nuevo
+        setTimeout(() => {
+            if(nameInput) nameInput.classList.remove('input-error');
+            if(addressInput) addressInput.classList.remove('input-error');
+        }, 500);
+        
+        // Un botón vibratorio o un texto temporal en el botón
+        const btn = document.querySelector('.whatsapp-btn');
+        if(btn) {
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> COMPLETA TUS DATOS';
+            btn.style.backgroundColor = '#dc3545';
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.backgroundColor = '';
+            }, 2000);
+        }
         return;
     }
 
@@ -471,7 +507,13 @@ function sendOrder() {
     text += `- Cliente: ${name}\r\n`;
     text += `- Dirección: ${address}\r\n`;
     text += `- Zona: ${deliveryName}\r\n`;
-    text += `- Pago: ${paymentMethod}\r\n\r\n`;
+    text += `- Pago: ${paymentMethod}\r\n`;
+    
+    if (notes !== '') {
+        text += `- Notas: ${notes}\r\n`;
+    }
+    
+    text += `\r\n`;
     
     text += `*PRODUCTOS*\r\n`;
 
