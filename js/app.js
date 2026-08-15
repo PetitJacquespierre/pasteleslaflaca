@@ -2,7 +2,10 @@
 let products = [];
 let cart = [];
 let bcvRate = 764.35; 
-const WHATSAPP_NUMBER = "584120609841"; 
+let WHATSAPP_NUMBER = "584120609841"; 
+if (typeof clientConfig !== 'undefined' && clientConfig.whatsapp) {
+    WHATSAPP_NUMBER = clientConfig.whatsapp;
+}
 const MENU_API_URL = "https://script.google.com/macros/s/AKfycbxaTgppYGOj3stpEzAtkPCZLIvfLSch62FV0fLbQNjMB2G7kfWOR_j6LHldbwyUytpw2g/exec";
 
 // === NUEVO: PANEL CENTRAL GROW STUDIO ===
@@ -332,17 +335,19 @@ function renderMenu() {
                 <div class="product-image-box">
                     ${imgHtml}
                 </div>
-                <div class="product-info">
-                    <h3>${p.nombre}</h3>
-                    <p class="product-desc">${p.descripcion}</p>
+                <div class="product-content">
+                    <div class="product-info">
+                        <h3>${p.nombre}</h3>
+                        <p class="product-desc">${p.descripcion}</p>
+                    </div>
+                    <div class="product-price">
+                        <div class="price-usd">$${p.precio.toFixed(2)}</div>
+                        <div class="price-bs">Aprox. ${bsPrice} Bs</div>
+                    </div>
+                    <button class="add-btn">
+                        <i class="fa-solid fa-plus"></i> AGREGAR
+                    </button>
                 </div>
-                <div class="product-price">
-                    <div class="price-usd">$${p.precio.toFixed(2)}</div>
-                    <div class="price-bs">Aprox. ${bsPrice} Bs</div>
-                </div>
-                <button class="add-btn">
-                    <i class="fa-solid fa-plus"></i> AGREGAR
-                </button>
             </div>
         `;
         grid.innerHTML += html;
@@ -526,6 +531,7 @@ function sendOrder() {
     
     const deliverySelect = document.getElementById('delivery-zone');
     const deliveryName = deliverySelect ? deliverySelect.options[deliverySelect.selectedIndex].text : 'Delivery';
+    const isRetiro = deliverySelect ? deliverySelect.options[deliverySelect.selectedIndex].getAttribute('data-type') === 'retiro' : false;
     const deliveryCost = deliverySelect ? parseFloat(deliverySelect.value) : 0;
 
     const paymentSelect = document.getElementById('payment-method');
@@ -541,7 +547,7 @@ function sendOrder() {
         if(nameInput) nameInput.classList.remove('input-error');
     }
     
-    if (!address) {
+    if (!address && !isRetiro) {
         if(addressInput) addressInput.classList.add('input-error');
         isValid = false;
     } else {

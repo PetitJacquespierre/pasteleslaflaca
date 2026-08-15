@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pasteles y Tequeños La Flaca</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,600;0,800;1,900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Poppins:ital,wght@0,400;0,600;0,800;1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css?v=6">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" href="img/isotipo.png">
@@ -30,8 +30,14 @@
 
     <!-- PANTALLA DE SUSPENSIÓN REMOTA (SaaS Kill Switch) -->
     <div id="system-suspended-screen" style="display: none;">
+        <!-- Efecto de Orbes de Fondo -->
+        <div class="orbs-background">
+            <div class="orb orb-1"></div>
+            <div class="orb orb-2"></div>
+            <div class="orb orb-3"></div>
+        </div>
         <div class="suspended-content">
-            <i class="fa-solid fa-triangle-exclamation text-yellow" style="font-size: 4rem; margin-bottom: 20px;"></i>
+            <img src="img/growisotipo.png" alt="Grow Studio" style="width: 120px; margin-bottom: 25px; animation: pulse 2s infinite; filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.8));">
             <h2 style="font-size: 2rem; margin-bottom: 15px;">Sitio en Mantenimiento</h2>
             <p style="font-size: 1.1rem; color: #ddd;">Estamos realizando actualizaciones importantes.<br>Por favor, regresa más tarde.</p>
         </div>
@@ -49,18 +55,37 @@
 
     <!-- HERO IMPACTANTE -->
     <section class="hero">
-        <div class="hero-content">
-            <div class="hero-pill"><i class="fa-solid fa-star text-yellow"></i> CALIDAD Y SABOR GARANTIZADO</div>
-            <h1 class="hero-title">¡EL SABOR QUE TE <span class="text-gradient">ENCANTA!</span></h1>
-            <p class="hero-subtitle">Pasteles crujientes y tequeños full queso listos para freír o comer al instante.</p>
-            
-            <div class="hero-features">
-                <span class="feat-badge"><i class="fa-solid fa-bolt text-yellow"></i> Delivery Rápido</span>
-                <span class="feat-badge"><i class="fa-solid fa-cheese text-yellow"></i> 100% Queso</span>
-                <span class="feat-badge"><i class="fa-solid fa-pepper-hot text-yellow"></i> Salsa Gratis</span>
+        <div class="hero-layout">
+            <div class="hero-content">
+                <div class="hero-pill"><i class="fa-solid fa-star text-yellow"></i> EL ORIGINAL DESDE SIEMPRE</div>
+                <h1 class="hero-title">CRUJIENTES.<br><span class="text-gradient">FULL QUESO.</span><br>IRRESISTIBLES.</h1>
+                <p class="hero-subtitle">Los mejores pasteles y tequeños de la ciudad, listos para freír o comer al instante.</p>
+                
+                <div class="hero-features">
+                    <span class="feat-badge"><i class="fa-solid fa-bolt text-yellow"></i> Delivery Rápido</span>
+                    <span class="feat-badge"><i class="fa-solid fa-cheese text-yellow"></i> 100% Queso Blanco</span>
+                </div>
+                
+                <button class="hero-btn" onclick="document.getElementById('menu-grid').scrollIntoView({behavior: 'smooth'})">
+                    ¡VER MENÚ AHORA! <i class="fa-solid fa-arrow-down"></i>
+                </button>
+            </div>
+            <div class="hero-image-container">
+                <img src="img/hero_tequeno.jpg" alt="Tequeño Jumbo derritiéndose" class="hero-img">
             </div>
         </div>
     </section>
+
+    <!-- BANNER AMARILLO INTERRUPTOR -->
+    <div class="promo-interrupt-banner">
+        <div class="promo-interrupt-content">
+            <i class="fa-solid fa-motorcycle promo-icon"></i>
+            <div class="promo-text">
+                <h2>¿ANTOJO DE TEQUEÑOS?</h2>
+                <p>¡PIDE AHORA Y TE LOS LLEVAMOS CALIENTICOS!</p>
+            </div>
+        </div>
+    </div>
 
     <!-- MENÚ / CATÁLOGO -->
     <main>
@@ -140,9 +165,10 @@
                     <div class="form-group">
                         <label class="form-label"><i class="fa-solid fa-truck-fast text-yellow"></i> Zona de Delivery:</label>
                         <select id="delivery-zone" class="form-select" onchange="updateTotal()">
-                            <option value="0">Las Adjuntas (ENVÍO GRATIS)</option>
-                            <option value="1">Zonas Aledañas (+$1.00 USD)</option>
-                            <option value="2">Fuera de la zona (+$2.00 USD)</option>
+                            <option value="0" data-type="retiro">Retiro en Tienda (No deseo envío)</option>
+                            <option value="0" data-type="delivery">Las Adjuntas (ENVÍO GRATIS)</option>
+                            <option value="1" data-type="delivery">Zonas Aledañas (+$1.00 USD)</option>
+                            <option value="2" data-type="delivery">Fuera de la zona (+$2.00 USD)</option>
                         </select>
                     </div>
                     
@@ -246,7 +272,8 @@
             </div>
         </div>
     <!-- SCRIPTS -->
-    <script src="js/app.js?v=5" charset="utf-8"></script>
+    <script src="js/config.js" charset="utf-8"></script>
+    <script src="js/app.js?v=6" charset="utf-8"></script>
     <script>
         // Registro de Service Worker para PWA (Instalación Offline)
         if ('serviceWorker' in navigator) {
