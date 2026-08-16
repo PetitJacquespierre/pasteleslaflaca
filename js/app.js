@@ -59,9 +59,47 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Esperamos medio segundo adicional para asegurar que las imágenes empiecen a pintar
         setTimeout(() => {
             dismissSplash();
+            initPromoSlider();
         }, 500);
+        
+        // Registrar PWA Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js')
+                .then(() => console.log('PWA Service Worker Registrado'))
+                .catch(err => console.error('PWA Falló:', err));
+        }
     }
 });
+
+// === LÓGICA DEL CARRUSEL DE PROMOCIONES ===
+function initPromoSlider() {
+    const slider = document.getElementById('promoSlider');
+    const indicators = document.querySelectorAll('.slider-indicators .indicator');
+    if (!slider || indicators.length === 0) return;
+
+    let currentIndex = 0;
+    const slideCount = indicators.length;
+
+    // Actualiza los puntitos visuales según dónde esté el scroll
+    slider.addEventListener('scroll', () => {
+        const scrollLeft = slider.scrollLeft;
+        const slideWidth = slider.clientWidth;
+        currentIndex = Math.round(scrollLeft / slideWidth);
+        
+        indicators.forEach((ind, i) => {
+            ind.classList.toggle('active', i === currentIndex);
+        });
+    });
+
+    // Auto rotación cada 4 segundos
+    setInterval(() => {
+        currentIndex = (currentIndex + 1) % slideCount;
+        slider.scrollTo({
+            left: currentIndex * slider.clientWidth,
+            behavior: 'smooth'
+        });
+    }, 4000);
+}
 
 async function checkSaaSStatus() {
     // Si aún no has puesto tu URL maestra, salta este paso para evitar errores
@@ -357,9 +395,18 @@ function renderMenu() {
 // =========================================
 // LÓGICA DEL CARRITO
 // =========================================
-function addToCart(id) {
-    const product = products.find(p => p.id === id);
-    const existing = cart.find(item => item.id === id);
+function addToCart(itemOrId) {
+    let product;
+    if (typeof itemOrId === 'object' && itemOrId !== null) {
+        product = itemOrId; // Objeto directo de Upsell
+    } else {
+        // Es un ID (número o string)
+        product = products.find(p => String(p.id) === String(itemOrId));
+    }
+    
+    if (!product) return;
+
+    const existing = cart.find(item => item.id === product.id);
 
     if (existing) {
         existing.qty++;
@@ -369,20 +416,26 @@ function addToCart(id) {
     
     updateCartUI();
     
+    // Haptic Feedback (Vibración en móviles)
+    if (navigator.vibrate) {
+        navigator.vibrate(50);
+    }
+    
     // Efecto de palpitación en el botón flotante al agregar
     const fab = document.getElementById('cart-fab');
     if (fab) {
-        fab.style.transform = 'scale(1.08)';
-        setTimeout(() => fab.style.transform = 'scale(1)', 200);
+        fab.classList.remove('animate-pop');
+        void fab.offsetWidth; // Trigger reflow
+        fab.classList.add('animate-pop');
     }
 }
 
 function updateQty(id, delta) {
-    const item = cart.find(i => i.id === id);
+    const item = cart.find(i => String(i.id) === String(id));
     if (item) {
         item.qty += delta;
         if (item.qty <= 0) {
-            cart = cart.filter(i => i.id !== id);
+            cart = cart.filter(i => String(i.id) !== String(id));
         }
     }
     updateCartUI();
@@ -421,9 +474,9 @@ function updateCartUI() {
                         <p>$${itemTotal.toFixed(2)} USD</p>
                     </div>
                     <div class="qty-controls">
-                        <button class="qty-btn" onclick="updateQty(${item.id}, -1)">${item.qty === 1 ? '<i class="fa-solid fa-trash-can" style="font-size: 0.9rem;"></i>' : '-'}</button>
+                        <button class="qty-btn" onclick="updateQty('${item.id}', -1)">${item.qty === 1 ? '<i class="fa-solid fa-trash-can" style="font-size: 0.9rem;"></i>' : '-'}</button>
                         <span>${item.qty}</span>
-                        <button class="qty-btn" onclick="updateQty(${item.id}, 1)">+</button>
+                        <button class="qty-btn" onclick="updateQty('${item.id}', 1)">+</button>
                     </div>
                 </div>
             `;

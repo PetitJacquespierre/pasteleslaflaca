@@ -9,6 +9,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" href="img/isotipo.png">
     
+    <!-- Meta Tags OpenGraph para WhatsApp y Redes Sociales -->
+    <meta property="og:title" content="¡Pide ahora en Pasteles La Flaca!">
+    <meta property="og:description" content="Los mejores pasteles y tequeños de la ciudad. Haz tu pedido rápido y fácil.">
+    <meta property="og:image" content="https://i.imgur.com/your_hosted_hero_image.jpg"> <!-- Placeholder as real URL needed for WhatsApp -->
+    <meta property="og:url" content="https://pasteleslaflaca.pf">
+    <meta property="og:type" content="website">
+    
     <!-- PWA -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#ff5500">
@@ -22,9 +29,20 @@
             <div class="splash-ring"></div>
             <div class="splash-ring-inner"></div>
             <img src="img/isotipo.png" alt="La Flaca" class="splash-logo">
-            <div class="splash-loading-text">
-                CARGANDO EXPERIENCIA<span class="dots">...</span>
-            </div>
+            <div class="splash-loading-text" id="dynamic-splash-text"></div>
+            <script>
+                // CAMBIA ESTE NOMBRE PARA CADA NUEVO CLIENTE
+                const BUSINESS_NAME = "LA FLACA"; 
+                
+                const splashPhrases = [
+                    `${BUSINESS_NAME}...`,
+                    `DESPERTANDO TU ANTOJO...`,
+                    `PREPARANDO ALGO DELICIOSO...`,
+                    `COCINANDO TU EXPERIENCIA...`,
+                    `ACCEDIENDO A LA EXPERIENCIA ${BUSINESS_NAME}...`
+                ];
+                document.getElementById('dynamic-splash-text').innerHTML = splashPhrases[Math.floor(Math.random() * splashPhrases.length)];
+            </script>
         </div>
     </div>
 
@@ -76,14 +94,20 @@
         </div>
     </section>
 
-    <!-- BANNER AMARILLO INTERRUPTOR -->
-    <div class="promo-interrupt-banner">
-        <div class="promo-interrupt-content">
-            <i class="fa-solid fa-motorcycle promo-icon"></i>
-            <div class="promo-text">
-                <h2>¿ANTOJO DE TEQUEÑOS?</h2>
-                <p>¡PIDE AHORA Y TE LOS LLEVAMOS CALIENTICOS!</p>
+    <!-- CARRUSEL DE PROMOCIONES -->
+    <div class="promo-slider-container">
+        <div class="promo-slider" id="promoSlider">
+            <div class="promo-slide">
+                <img src="img/promo1.jpg" alt="Promoción 1">
             </div>
+            <div class="promo-slide">
+                <img src="img/promo2.jpg" alt="Promoción 2">
+            </div>
+        </div>
+        <!-- Indicadores (Opcional visual) -->
+        <div class="slider-indicators">
+            <div class="indicator active"></div>
+            <div class="indicator"></div>
         </div>
     </div>
 
@@ -99,12 +123,6 @@
             <span id="store-closed-text">Actualmente estamos CERRADOS.</span>
         </div>
 
-        <!-- CARRUSEL DE PROMOS -->
-        <div id="promo-carousel" class="promo-carousel" style="display: none;">
-            <div class="carousel-track" id="carousel-track">
-                <!-- Las imágenes se inyectan aquí -->
-            </div>
-        </div>
 
         <!-- CONTENEDOR DE FILTROS DINÁMICOS -->
         <div id="menu-filters" class="filters-container">
@@ -243,6 +261,19 @@
                     <div id="cart-items">
                         <p class="empty-cart">Tu carrito está vacío.</p>
                     </div>
+                </div>
+            </div>
+
+            <!-- 3. UPSIDE / VENTA CRUZADA -->
+            <div class="cart-upsell-section">
+                <h5 class="upsell-title">¿Deseas agregar un extra?</h5>
+                <div class="upsell-container">
+                    <button class="upsell-btn" onclick="addToCart({id: 'extra_salsa', nombre: 'Salsa de Ajo Extra', precio: 1.00})">
+                        + Salsa Ajo ($1)
+                    </button>
+                    <button class="upsell-btn" onclick="addToCart({id: 'extra_coca', nombre: 'Coca-Cola 2L', precio: 3.00})">
+                        + Coca-Cola ($3)
+                    </button>
                 </div>
             </div>
 
