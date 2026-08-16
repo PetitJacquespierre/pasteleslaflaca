@@ -1,7 +1,7 @@
 // Configuración Maestra del Cliente
 const clientConfig = {
     businessName: "Pasteles La Flaca",
-    whatsapp: "584120000000", // Reemplazar con el real
+    whatsapp: "584120609841", // Reemplazar con el real
     colors: {
         primary: "#F59E0B",   // Naranja Ámbar de La Flaca
         bgDark: "#09090b",    // Negro Carbón
