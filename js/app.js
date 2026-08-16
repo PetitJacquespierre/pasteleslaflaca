@@ -51,6 +51,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         
         renderFilters();
         renderMenu();
+        renderUpsells();
         
     } catch (e) {
         console.error("Error crítico en la carga inicial:", e);
@@ -390,6 +391,39 @@ function renderMenu() {
         `;
         grid.innerHTML += html;
     });
+}
+
+function renderUpsells() {
+    const upsellContainer = document.querySelector('.upsell-container');
+    if (!upsellContainer) return;
+    
+    let html = '';
+    
+    // Buscar los items reales en el menú para usar sus precios oficiales
+    const salsa = products.find(p => p.nombre.toLowerCase().includes('salsa'));
+    const coca = products.find(p => p.nombre.toLowerCase().includes('coca') && p.nombre.toLowerCase().includes('cola'));
+    
+    if (salsa) {
+        html += `<button class="upsell-btn" onclick="addToCart('${salsa.id}')">
+            + ${salsa.nombre} ($${salsa.precio})
+        </button>`;
+    } else {
+        html += `<button class="upsell-btn" onclick="addToCart({id: 'extra_salsa', nombre: 'Salsa de Ajo Extra', precio: 1.00})">
+            + Salsa Ajo ($1.00)
+        </button>`;
+    }
+    
+    if (coca) {
+        html += `<button class="upsell-btn" onclick="addToCart('${coca.id}')">
+            + ${coca.nombre} ($${coca.precio})
+        </button>`;
+    } else {
+        html += `<button class="upsell-btn" onclick="addToCart({id: 'extra_coca', nombre: 'Coca-Cola', precio: 3.00})">
+            + Coca-Cola ($3.00)
+        </button>`;
+    }
+    
+    upsellContainer.innerHTML = html;
 }
 
 // =========================================

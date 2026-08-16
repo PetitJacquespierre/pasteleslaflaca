@@ -1153,6 +1153,7 @@ footer {
         padding-bottom: 10px;
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none; /* Firefox */
+        top: 90px; /* Empujado más abajo para que no se corte con el header */
     }
     .filters-container::-webkit-scrollbar {
         display: none; /* Chrome/Safari */

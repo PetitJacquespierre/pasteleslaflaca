@@ -265,15 +265,10 @@
             </div>
 
             <!-- 3. UPSIDE / VENTA CRUZADA -->
-            <div class="cart-upsell-section">
+            <div class="cart-upsell-section" style="display: block;">
                 <h5 class="upsell-title">¿Deseas agregar un extra?</h5>
                 <div class="upsell-container">
-                    <button class="upsell-btn" onclick="addToCart({id: 'extra_salsa', nombre: 'Salsa de Ajo Extra', precio: 1.00})">
-                        + Salsa Ajo ($1)
-                    </button>
-                    <button class="upsell-btn" onclick="addToCart({id: 'extra_coca', nombre: 'Coca-Cola 2L', precio: 3.00})">
-                        + Coca-Cola ($3)
-                    </button>
+                    <!-- Botones generados dinámicamente por JS (renderUpsells) -->
                 </div>
             </div>
 
