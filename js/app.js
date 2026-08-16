@@ -2,7 +2,7 @@
 let products = [];
 let cart = [];
 let bcvRate = 764.35; 
-let WHATSAPP_NUMBER = "584120609841"; 
+let WHATSAPP_NUMBER = "04120609841"; 
 if (typeof clientConfig !== 'undefined' && clientConfig.whatsapp) {
     WHATSAPP_NUMBER = clientConfig.whatsapp;
 }
