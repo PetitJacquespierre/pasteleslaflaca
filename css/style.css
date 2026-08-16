@@ -237,6 +237,7 @@ header {
 @media (max-width: 768px) {
     .hero-layout {
         flex-direction: column-reverse;
+        min-height: auto;
     }
     .hero-content {
         padding: 40px 20px;
@@ -368,6 +369,12 @@ header {
     max-height: 85vh;
     object-fit: contain;
     display: block;
+}
+
+@media (max-width: 768px) {
+    .promo-slide img {
+        max-height: 45vh;
+    }
 }
 
 .slider-indicators {
