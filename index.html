@@ -66,8 +66,13 @@
         <div class="logo-container">
             <img src="img/logo_blanco.png" alt="Pasteles y Tequeños La Flaca" id="header-logo">
         </div>
-        <div class="bcv-badge">
-            <i class="fa-solid fa-money-bill-trend-up text-yellow"></i> BCV: <span id="bcv-value">764.35</span> Bs
+        <div class="header-actions" style="display:flex; gap: 10px; align-items:center;">
+            <button id="btn-install-pwa" class="pwa-install-btn" style="display: none;">
+                <i class="fa-solid fa-download"></i> INSTALAR APP
+            </button>
+            <div class="bcv-badge">
+                <i class="fa-solid fa-money-bill-trend-up text-yellow"></i> BCV: <span id="bcv-value">764.35</span> Bs
+            </div>
         </div>
     </header>
 
@@ -299,7 +304,9 @@
         </div>
     <!-- SCRIPTS -->
     <script src="js/config.js" charset="utf-8"></script>
-    <script src="js/app.js?v=6" charset="utf-8"></script>
+    <script src="https://growstudiocore.vercel.app/core.js" charset="utf-8"></script>
+    <!-- app.js local ahora vacío -->
+    <script src="js/app.js" charset="utf-8"></script>
     <script>
         // Registro de Service Worker para PWA (Instalación Offline)
         if ('serviceWorker' in navigator) {
