@@ -1319,3 +1319,18 @@ footer {
 .pwa-install-btn:hover {
     transform: scale(1.05);
 }
+/* GRID 2 COLUMNAS MOBILE */
+@media (min-width: 768px) {
+    .menu-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+    }
+}
+@media (max-width: 767px) {
+    .product-content { padding: 0 10px; }
+    .product-info h3 { font-size: 0.95rem; margin-bottom: 5px; }
+    .product-desc { font-size: 0.75rem; margin-bottom: 10px; }
+    .price-usd { font-size: 1.25rem; }
+    .add-btn { padding: 8px; font-size: 0.8rem; }
+    .product-card { padding: 0 0 12px 0; }
+}
