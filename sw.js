@@ -1,4 +1,4 @@
-const CACHE_NAME = 'laflaca-v5';
+const CACHE_NAME = 'laflaca-v6';
 const urlsToCache = [
   './',
   './index.html',
