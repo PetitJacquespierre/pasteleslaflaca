@@ -3,6 +3,7 @@ const clientConfig = {
     id: "la_flaca", // Identificador único para el Kill Switch
     businessName: "Pasteles La Flaca",
     whatsapp: "584120609841", // Reemplazar con el número de WhatsApp del cliente
+    urlApiBCV: "https://script.google.com/macros/s/AKfycbxdQlLO7lDOAvbhFqwVBs722T_i1KQ08z1gdf4NdqA6HvVcwGzRX4BZtHSd58piGL11/exec",
     hojaDeCalculo: "https://script.google.com/macros/s/AKfycbxaTgppYGOj3stpEzAtkPCZLIvfLSch62FV0fLbQNjMB2G7kfWOR_j6LHldbwyUytpw2g/exec", // Enlace al Google Sheets
     colors: {
         primary: "#F59E0B",   // Naranja Ámbar de La Flaca
