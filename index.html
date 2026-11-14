@@ -3,18 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pasteles y Tequeños La Flaca</title>
+    <title>Pasteles y Tequeños La Flaca | Menú Digital & Pedidos WhatsApp</title>
+    <meta name="description" content="Pide en línea los mejores pasteles y tequeños de Punto Fijo en Pasteles La Flaca. Combos familiares, bandejas y tequeños listos con delivery a WhatsApp.">
+    <meta name="keywords" content="pasteles, tequeños, comida rápida, Punto Fijo, Falcón, delivery, menú digital, pedidos WhatsApp">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://pasteleslaflaca.vercel.app/">
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Poppins:ital,wght@0,400;0,600;0,800;1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css?v=6">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/png" href="img/isotipo.png">
     
     <!-- Meta Tags OpenGraph para WhatsApp y Redes Sociales -->
-    <meta property="og:title" content="¡Pide ahora en Pasteles La Flaca!">
-    <meta property="og:description" content="Los mejores pasteles y tequeños de la ciudad. Haz tu pedido rápido y fácil.">
-    <meta property="og:image" content="https://i.imgur.com/your_hosted_hero_image.jpg"> <!-- Placeholder as real URL needed for WhatsApp -->
-    <meta property="og:url" content="https://pasteleslaflaca.pf">
-    <meta property="og:type" content="website">
+    <meta property="og:title" content="Pasteles La Flaca | Menú Digital & Pedidos WhatsApp">
+    <meta property="og:description" content="Pide en línea los mejores pasteles y tequeños de Punto Fijo. Entrega rápida directo a WhatsApp.">
+    <meta property="og:image" content="https://pasteleslaflaca.vercel.app/img/isotipo.png">
+    <meta property="og:url" content="https://pasteleslaflaca.vercel.app/">
+    <meta property="og:type" content="restaurant">
+    <meta property="og:locale" content="es_VE">
+
+    <!-- Schema.org Restaurant / FastFoodRestaurant -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FastFoodRestaurant",
+      "name": "Pasteles La Flaca",
+      "image": "https://pasteleslaflaca.vercel.app/img/isotipo.png",
+      "url": "https://pasteleslaflaca.vercel.app/",
+      "telephone": "+584120609841",
+      "priceRange": "$",
+      "servesCuisine": "Venezolana, Desayunos, Pasteles y Tequeños",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Punto Fijo",
+        "addressRegion": "Falcón",
+        "addressCountry": "VE"
+      },
+      "hasMenu": "https://pasteleslaflaca.vercel.app/",
+      "potentialAction": {
+        "@type": "OrderAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://pasteleslaflaca.vercel.app/",
+          "actionPlatform": [
+            "http://schema.org/DesktopWebPlatform",
+            "http://schema.org/MobileWebPlatform"
+          ]
+        },
+        "deliveryMethod": "http://purl.org/goodrelations/v1#DeliveryModeDirectDownload"
+      }
+    }
+    </script>
     
     <!-- PWA -->
     <link rel="manifest" href="manifest.json">

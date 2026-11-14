@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://pasteleslaflaca.vercel.app/sitemap.xml
