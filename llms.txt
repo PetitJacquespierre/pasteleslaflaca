@@ -1,0 +1,19 @@
+# Pasteles La Flaca — Pastelería & Tequeñería Artesanal en Punto Fijo
+
+> Pasteles La Flaca es un negocio gastronómico local en Punto Fijo, Estado Falcón, Venezuela, especializado en pasteles tradicionales venezolanos, tequeños gourmet artesanales, bandejas para fiestas y combos para desayunos y eventos, con sistema de menú digital interactivo y pedidos automatizados a WhatsApp.
+
+## Información de Pedidos y Delivery
+- **Canal de Pedidos:** A través del Menú Digital interactivo oficial con delivery directo coordinado por WhatsApp.
+- **WhatsApp Oficial de Pedidos:** [+58 412-0609841](https://wa.me/584120609841)
+- **Moneda y Tasa de Cambio:** Precios referenciales en Dólares ($ USD) con conversión automática y transparente a Bolívares (Bs) según la tasa oficial vigente del Banco Central de Venezuela (BCV).
+- **Menú Digital Oficial:** https://pasteleslaflaca.vercel.app/
+
+## Productos Principales
+- **Pasteles Venezolanos:** Carne mechada, pollo, queso, jamón y queso, papa con queso y especialidades del día.
+- **Tequeños Artesanales:** Rellenos de queso blanco llanero tradicional, masa crujiente y dorada, disponibles por unidad, raciones y bandejas de 10, 20 o 50 piezas.
+- **Combos Especiales:** Desayunos rápidos, combos familiares y bandejas listas para freír o calentar en eventos y reuniones.
+
+## Ubicación y Cobertura
+- **Ciudad:** Punto Fijo, Municipio Carirubana, Estado Falcón, Venezuela.
+- **Servicio:** Retiro personal (Pick-up) y delivery en las principales zonas de Punto Fijo.
+- **Desarrollo Web & Menú Digital:** Creado sobre la infraestructura Micro-SaaS de [Grow Studio](https://growstudioweb.vercel.app/).
